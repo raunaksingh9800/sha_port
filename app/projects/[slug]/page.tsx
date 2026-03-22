@@ -254,16 +254,25 @@ export default function ProjectDetail() {
       <footer className="footer">
         <span className="footer-copy">© 2024 Shalini</span>
         <div className="footer-links">
-          {["Twitter", "Dribbble", "LinkedIn", "Resume"].map((l) => (
-            <a
-              key={l}
-              className="footer-link"
-              onMouseEnter={enlargeCursor}
-              onMouseLeave={resetCursor}
-            >
-              {l}
-            </a>
-          ))}
+                      {[
+              {
+                label: "LinkedIn",
+                href: "https://www.linkedin.com/in/shalini-gowda-a46863332/",
+              },
+              { label: "Resume", href: "/resume.pdf" },
+            ].map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="footer-link"
+                onMouseEnter={enlargeCursor}
+                onMouseLeave={resetCursor}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {link.label}
+              </a>
+            ))}
         </div>
       </footer>
     </>
