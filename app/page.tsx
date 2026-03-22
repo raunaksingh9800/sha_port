@@ -1,135 +1,54 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const projects = [
-  {
-    tag: "Fintech · Web App",
-    name: "NOVA Pay",
-    desc: "A cross-border payment dashboard for freelancers. Reduced transaction time by 60% with a streamlined multi-currency flow.",
-    year: "2024",
-  },
-  {
-    tag: "Healthcare · Mobile",
-    name: "Pulsetrack",
-    desc: "Remote patient monitoring app for post-surgery recovery. Serving 3,000+ patients across 12 hospitals in Southeast Asia.",
-    year: "2024",
-  },
-  {
-    tag: "SaaS · Design System",
-    name: "Orbit DS",
-    desc: "End-to-end design system for a B2B analytics platform — 80+ components, dark mode, accessibility-first from the ground up.",
-    year: "2023",
-  },
-  {
-    tag: "E-commerce · Branding",
-    name: "Terroir",
-    desc: "Brand identity & digital storefront for an artisanal wine importer. 2.4× conversion lift post-redesign.",
-    year: "2023",
-  },
-];
-
-// ─── Farmer Loader ────────────────────────────────────────────────────────────
-function FarmerLoader({ onDone }: { onDone: () => void }) {
-  useEffect(() => {
-    const t = setTimeout(onDone, 2800);
-    return () => clearTimeout(t);
-  }, [onDone]);
-
-  return (
-    <div className="farmer-loader">
-      {/* farmer scene */}
-
-
-      <div className="loader-bar">
-        <div className="loader-fill" />
-      </div>
-      <p className="loader-text">Growing your portfolio…</p>
-
-      <style>{`
-        .farmer-loader {
-          position: fixed; inset: 0; background: #0A0A0A; z-index: 9999;
-          display: flex; flex-direction: column; align-items: center;
-          justify-content: center; gap: 28px;
-          animation: loaderExit 0.6s 2.6s cubic-bezier(0.16,1,0.3,1) forwards;
-        }
-        @keyframes loaderExit { to { transform: translateY(-100%); } }
-
-        .scene { position: relative; width: 200px; height: 110px; }
-        .ground {
-          position: absolute; bottom: 0; left: 0; right: 0; height: 22px;
-          background: #2D5016; border-radius: 4px 4px 0 0;
-        }
-        .seed {
-          position: absolute; width: 8px; height: 8px; background: #8B6914;
-          border-radius: 50%; bottom: 24px;
-          animation: seedBounce 0.6s ease-in-out infinite alternate;
-        }
-        .seed:nth-child(2) { left: 16px; }
-        .seed:nth-child(3) { left: 56px; }
-        .seed:nth-child(4) { left: 96px; }
-        .seed:nth-child(5) { left: 136px; }
-        @keyframes seedBounce {
-          0%   { transform: translateY(0) scale(1); background: #8B6914; }
-          100% { transform: translateY(-18px) scale(0.7); background: #4CAF50; }
-        }
-        .sprout {
-          position: absolute; bottom: 22px; width: 4px; background: #4CAF50;
-          border-radius: 2px; transform-origin: bottom center;
-          animation: sproutGrow 1.2s cubic-bezier(0.16,1,0.3,1) infinite;
-        }
-        .sprout:nth-child(6) { left: 18px; }
-        .sprout:nth-child(7) { left: 58px; }
-        .sprout:nth-child(8) { left: 98px; }
-        @keyframes sproutGrow {
-          0%,100% { height: 0; opacity: 0; }
-          30%     { height: 24px; opacity: 1; }
-          60%     { height: 32px; opacity: 1; }
-          80%     { height: 28px; opacity: 0.6; }
-        }
-        .farmer { position: absolute; bottom: 18px; right: 8px; animation: farmerBob 0.45s ease-in-out infinite alternate; }
-        .farmer-emoji { font-size: 40px; display: block; animation: farmerHoe 0.4s ease-in-out infinite alternate; }
-        @keyframes farmerBob  { to { transform: translateY(-3px); } }
-        @keyframes farmerHoe  { 0% { transform: rotate(-8deg); } 100% { transform: rotate(8deg); } }
-
-        .loader-bar  { width: 200px; height: 2px; background: #222; border-radius: 2px; overflow: hidden; }
-        .loader-fill { height: 100%; background: #FAFAF7; animation: loadFill 2.4s cubic-bezier(0.16,1,0.3,1) forwards; }
-        @keyframes loadFill { 0% { width: 0%; } 100% { width: 100%; } }
-
-        .loader-text {
-          font-family: 'Syne', sans-serif; color: #FAFAF7; font-size: 12px;
-          letter-spacing: 0.2em; text-transform: uppercase;
-          animation: textPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes textPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
-      `}</style>
-    </div>
-  );
-}
+import Link from "next/link";
+import { projects } from "./lib/projectData";
 
 // ─── Project Card ─────────────────────────────────────────────────────────────
 function ProjectCard({
-  tag, name, desc, year, delay,
-}: { tag: string; name: string; desc: string; year: string; delay: number }) {
+  tag,
+  name,
+  desc,
+  year,
+  delay,
+  slug,
+}: {
+  tag: string;
+  name: string;
+  desc: string;
+  year: string;
+  delay: number;
+  slug: string;
+}) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div
+    <Link
+      href={`/projects/${slug}`}
       className="project-card"
-      style={{ animationDelay: `${delay}s` }}
+      style={{
+        animationDelay: `${delay}s`,
+        textDecoration: "none",
+        display: "block",
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* dark overlay */}
       <div className={`card-overlay ${hovered ? "card-overlay--in" : ""}`} />
-
       <div className="card-content">
-        <span className={`card-tag ${hovered ? "card-tag--dark" : ""}`}>{tag}</span>
-        <h2 className={`card-name ${hovered ? "card-name--dark" : ""}`}>{name}</h2>
-        <p  className={`card-desc ${hovered ? "card-desc--dark" : ""}`}>{desc}</p>
-        <p  className={`card-year ${hovered ? "card-year--dark" : ""}`}>{year}</p>
+        <span className={`card-tag ${hovered ? "card-tag--dark" : ""}`}>
+          {tag}
+        </span>
+        <h2 className={`card-name ${hovered ? "card-name--dark" : ""}`}>
+          {name}
+        </h2>
+        <p className={`card-desc ${hovered ? "card-desc--dark" : ""}`}>
+          {desc}
+        </p>
+        <p className={`card-year ${hovered ? "card-year--dark" : ""}`}>
+          {year}
+        </p>
       </div>
-
       <span className={`card-arrow ${hovered ? "card-arrow--in" : ""}`}>↗</span>
 
       <style>{`
@@ -187,13 +106,103 @@ function ProjectCard({
         }
         .card-arrow--in { opacity: 1; transform: translate(0, 0); }
       `}</style>
-    </div>
+    </Link>
   );
 }
 
+// ─── Logo Box ─────────────────────────────────────────────────────────────────
+function LogoBox({ initials, cls }: { initials: string; cls: string }) {
+  return (
+    <>
+      <div className={`logo-box ${cls} rounded-full`}>
+        <img className=" rounded-full" src={initials} alt="logo" />
+      </div>
+      <style>{`
+        .logo-box {
+          width: 44px; height: 44px; border-radius: 10px;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0; font-size: 14px; font-weight: 700;
+          font-family: 'Syne', sans-serif; letter-spacing: -0.02em;
+        }
+      `}</style>
+    </>
+  );
+}
+
+// ─── Badge ────────────────────────────────────────────────────────────────────
+function Badge({ label, type }: { label: string; type: "active" | "neutral" }) {
+  return (
+    <>
+      <span className={`badge badge--${type} `}>{label}</span>
+      <style>{`
+        .badge {
+          display: inline-block; font-size: 10px; letter-spacing: 0.08em;
+          text-transform: uppercase; padding: 2px 8px;
+          border-radius: 100px; font-weight: 500;
+        }
+        .badge--neutral { background: rgba(0,0,0,0.07); color: #555; }
+        .badge--active  { background: rgba(46,160,67,0.12); color: #2D6A4F; }
+      `}</style>
+    </>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const experience = [
+  {
+    initials:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT87kxdxVHFRY8OcBDBx6GCcojnN57PwWUkg&s",
+    logoClass: "oscode",
+    role: "Content Creation Lead",
+    org: "OSCode",
+    period: "Sep 2025 – Present · 7 mos",
+    tags: [{ label: "● Active", type: "active" as const }],
+  },
+  {
+    initials:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvjA8CJRiRp1tjDTVKNi9Q6YvYnT8rbP2LBA&s",
+    logoClass: "gdg",
+    role: "Cybersecurity Lead",
+    org: "Google Developers Group",
+    period: "Sep 2025 – Present · 7 mos",
+    tags: [{ label: "● Active", type: "active" as const }],
+  },
+  {
+    initials:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2UcHQntpZXQk5AlAs43-Jc3OUB1f_yiVhQ&s",
+    logoClass: "acc",
+    role: "Documentation Team Member",
+    org: "Atria Code Committee",
+    period: "Jun 2025 – Present · 10 mos",
+    tags: [
+      { label: "Part-time", type: "neutral" as const },
+      { label: "● Active", type: "active" as const },
+    ],
+  },
+];
+
+const education = [
+  {
+    initials:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMU4Wv9Lk7D_vz-Km3FFcEkP_-K4btlJMhYg&s",
+    logoClass: "ait",
+    degree: "B.E. Computer Science & Engineering",
+    institution: "Atria Institute of Technology",
+    period: "2024 – 2028",
+    tags: [{ label: "● Ongoing", type: "active" as const }],
+  },
+  {
+    initials: "https://apsbangalore.edu.in/resources/assets/images/logo.png",
+    logoClass: "aps",
+    degree: "I–XII (CBSE), Science — PCMC",
+    institution: "Army Public School Bangalore",
+    period: "Aug 2012 – May 2024",
+    tags: [{ label: "Completed", type: "neutral" as const }],
+  },
+];
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function Home() {
-  const [loaded, setLoaded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
 
@@ -204,24 +213,31 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!loaded) return;
     const cursor = cursorRef.current;
     if (!cursor) return;
     const move = (e: MouseEvent) => {
       cursor.style.left = e.clientX + "px";
-      cursor.style.top  = e.clientY + "px";
+      cursor.style.top = e.clientY + "px";
     };
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
-  }, [loaded]);
+  }, []);
 
   const enlargeCursor = () => {
     const c = cursorRef.current;
-    if (c) { c.style.width = "20px"; c.style.height = "20px"; c.style.background = "#1A56E8"; }
+    if (c) {
+      c.style.width = "20px";
+      c.style.height = "20px";
+      c.style.background = "#1A56E8";
+    }
   };
   const resetCursor = () => {
     const c = cursorRef.current;
-    if (c) { c.style.width = "8px"; c.style.height = "8px"; c.style.background = "#E8341A"; }
+    if (c) {
+      c.style.width = "8px";
+      c.style.height = "8px";
+      c.style.background = "#E8341A";
+    }
   };
 
   return (
@@ -344,7 +360,7 @@ export default function Home() {
           white-space: nowrap;
           font-family: 'Syne', sans-serif;
           font-size: clamp(44px,10vw,120px); font-weight: 800;
-          color: rgba(255,255,255,0.05); letter-spacing: -0.03em;
+          color: rgba(255,255,255,0.2); letter-spacing: -0.03em;
           animation: marquee 14s linear infinite;
         }
         @keyframes marquee {
@@ -369,6 +385,74 @@ export default function Home() {
           50%     { transform: scale(1.5); opacity: 0.6; }
         }
 
+        /* ── Profile section ── */
+        .profile-section {
+          padding: 0 clamp(20px,5vw,60px) clamp(48px,8vw,80px);
+        }
+        .section-label {
+          font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+          color: #8A8A85; font-weight: 500; margin-bottom: 36px;
+          display: flex; align-items: center; gap: 12px;
+        }
+        .section-label::after {
+          content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.1);
+        }
+        .profile-grid {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+        @media (max-width: 650px) { .profile-grid { grid-template-columns: 1fr; } }
+
+        .profile-block {
+          background: #F2F0EB; border-radius: 16px; padding: 28px 24px;
+          position: relative; overflow: hidden;
+          transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+                      box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
+          animation: cardSlide 0.7s cubic-bezier(0.16,1,0.3,1) backwards;
+        }
+        .profile-block:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 18px 52px rgba(0,0,0,0.09);
+        }
+        .profile-block:nth-child(1) { animation-delay: 0.1s; }
+        .profile-block:nth-child(2) { animation-delay: 0.2s; }
+
+        .block-header {
+          display: flex; align-items: flex-start;
+          justify-content: space-between; margin-bottom: 20px;
+        }
+        .block-eyebrow {
+          font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+          font-weight: 500; color: #8A8A85;
+          display: flex; align-items: center; gap: 8px;
+        }
+        .eyebrow-dot {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: #E8341A; display: inline-block;
+        }
+        .eyebrow-dot--blue { background: #1A56E8; }
+        .block-bg-title {
+          font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+          letter-spacing: -0.03em; color: #0A0A0A; opacity: 0.18;
+        }
+
+        .profile-entry {
+          display: flex; gap: 16px; padding: 18px 0;
+          border-bottom: 1px solid rgba(0,0,0,0.07);
+        }
+        .profile-entry:last-child { border-bottom: none; padding-bottom: 0; }
+        .profile-entry:first-of-type { padding-top: 0; }
+        .entry-body { flex: 1; min-width: 0; }
+        .entry-role {
+          font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+          letter-spacing: -0.01em; color: #0A0A0A; margin-bottom: 2px;
+        }
+        .entry-org { font-size: 13px; color: #555; font-weight: 500; margin-bottom: 6px; }
+        .entry-meta {
+          font-size: 12px; color: #8A8A85;
+          display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
+        .edu-divider { width: 100%; height: 1px; background: rgba(0,0,0,0.08); margin: 18px 0; }
+
         /* footer */
         .footer {
           padding: clamp(18px,4vw,30px) clamp(20px,5vw,60px);
@@ -390,20 +474,10 @@ export default function Home() {
         .footer-link:hover { color: #0A0A0A; }
         .footer-link:hover::after { width: 100%; }
 
-        /* main fade-in after loader */
-        .page-main {
-          opacity: 0;
-          animation: fadeIn 0.6s 2.85s cubic-bezier(0.16,1,0.3,1) forwards;
-        }
-        @keyframes fadeIn { to { opacity: 1; } }
-
         @media (max-width: 500px) {
           .footer { flex-direction: column; align-items: flex-start; }
         }
       `}</style>
-
-      {/* Loader */}
-      <FarmerLoader onDone={() => setLoaded(true)} />
 
       {/* Custom cursor */}
       <div ref={cursorRef} className="cursor-dot" />
@@ -412,36 +486,41 @@ export default function Home() {
       <div className="page-main">
         {/* NAV */}
         <nav className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
-          <a className="nav-logo" onMouseEnter={enlargeCursor} onMouseLeave={resetCursor}>
+          <a
+            className="nav-logo"
+            onMouseEnter={enlargeCursor}
+            onMouseLeave={resetCursor}
+          >
             Shalini
           </a>
-          <button
+          <Link
+            href="/contact"
             className="nav-btn"
             onMouseEnter={enlargeCursor}
             onMouseLeave={resetCursor}
           >
             <span>Let&apos;s talk</span>
-          </button>
+          </Link>
         </nav>
 
         {/* HERO */}
         <section className="hero">
           <h1 className="hero-headline">
             <span className="word-reveal">
-              <span className="word-in" style={{ animationDelay: "3.0s" }}>
+              <span className="word-in" style={{ animationDelay: "0s" }}>
                 Aesthetic gets{" "}
               </span>
             </span>
             <span className="red-word">attention.</span>
             <br />
             <span className="word-reveal">
-              <span className="word-in" style={{ animationDelay: "3.1s" }}>
+              <span className="word-in" style={{ animationDelay: "0.1s" }}>
                 Function
               </span>
             </span>
             <br />
             <span className="word-reveal">
-              <span className="word-in" style={{ animationDelay: "3.2s" }}>
+              <span className="word-in" style={{ animationDelay: "0.2s" }}>
                 earns{" "}
               </span>
             </span>
@@ -451,11 +530,7 @@ export default function Home() {
           {/* PROJECT CARDS */}
           <div className="projects-grid">
             {projects.map((p, i) => (
-              <ProjectCard
-                key={p.name}
-                {...p}
-                delay={3.3 + i * 0.1}
-              />
+              <ProjectCard key={p.name} {...p} delay={0.3 + i * 0.1} />
             ))}
           </div>
 
@@ -472,18 +547,94 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── EXPERIENCE & EDUCATION ── */}
+        <section className="profile-section">
+          <p className="section-label">Profile</p>
+
+          <div className="profile-grid">
+            {/* EXPERIENCE */}
+            <div className="profile-block">
+              <div className="block-header">
+                <span className="block-eyebrow">
+                  <span className="eyebrow-dot" />
+                  Experience
+                </span>
+                <span className="block-bg-title">Work</span>
+              </div>
+
+              {experience.map((e, i) => (
+                <div className="profile-entry" key={i}>
+                  <LogoBox initials={e.initials} cls={e.logoClass} />
+                  <div className="entry-body">
+                    <p className="entry-role">{e.role}</p>
+                    <p className="entry-org">{e.org}</p>
+                    <div className="entry-meta">
+                      <span>{e.period}</span>
+                      {e.tags.map((t, j) => (
+                        <Badge key={j} label={t.label} type={t.type} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* EDUCATION */}
+            <div className="profile-block">
+              <div className="block-header">
+                <span className="block-eyebrow">
+                  <span className="eyebrow-dot eyebrow-dot--blue" />
+                  Education
+                </span>
+                <span className="block-bg-title">Study</span>
+              </div>
+
+              {education.map((e, i) => (
+                <div key={i}>
+                  {i > 0 && <div className="edu-divider" />}
+                  <div
+                    className="profile-entry"
+                    style={{ paddingTop: i === 0 ? 0 : 18, border: "none" }}
+                  >
+                    <LogoBox initials={e.initials} cls={e.logoClass} />
+                    <div className="entry-body">
+                      <p className="entry-role">{e.degree}</p>
+                      <p className="entry-org">{e.institution}</p>
+                      <div className="entry-meta">
+                        <span>{e.period}</span>
+                        {e.tags.map((t, j) => (
+                          <Badge key={j} label={t.label} type={t.type} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FOOTER */}
         <footer className="footer">
           <span className="footer-copy">© 2024 Shalini</span>
           <div className="footer-links">
-            {["Twitter", "Dribbble", "LinkedIn", "Resume"].map((l) => (
+            {[
+              {
+                label: "LinkedIn",
+                href: "https://www.linkedin.com/in/shalini-gowda-a46863332/",
+              },
+              { label: "Resume", href: "/resume.pdf" },
+            ].map((link) => (
               <a
-                key={l}
+                key={link.label}
+                href={link.href}
                 className="footer-link"
                 onMouseEnter={enlargeCursor}
                 onMouseLeave={resetCursor}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {l}
+                {link.label}
               </a>
             ))}
           </div>
